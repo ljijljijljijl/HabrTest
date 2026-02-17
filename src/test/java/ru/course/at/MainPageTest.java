@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.openqa.selenium.By.cssSelector;
 
 public class MainPageTest {
     private WebDriver driver;
@@ -31,22 +32,26 @@ public class MainPageTest {
         driver.quit();
     }
 
+    By authorLink = cssSelector("a[data-test-id='user-info-username']");
+
+    private void openAuthorProfile() {
+        driver.findElement(authorLink).click();
+    }
+
     @Test
     @DisplayName("Текст ссылки на автора поста совпадает с ником на странице автора")
     public void authorLinkNameTest() {
-        WebElement authorLink = driver.findElement(By.cssSelector("a[data-test-id='user-info-username']"));
-        String authorLinkText = authorLink.getText();
-        authorLink.click();
+        String authorLinkText = driver.findElement(authorLink).getText();
+        openAuthorProfile();
 
-        WebElement userNick = driver.findElement(By.cssSelector("a.tm-user-card__nickname"));
+        WebElement userNick = driver.findElement(cssSelector("a.tm-user-card__nickname"));
         assertEquals(authorLinkText, userNick.getText().substring(1), "Текст не совпадает.");
     }
 
     @Test
     @DisplayName("Наличие вкладки Профиль на странице автора")
     public void authorProfileTabTest() {
-        WebElement authorLink = driver.findElement(By.cssSelector("a[data-test-id='user-info-username']"));
-        authorLink.click();
+        openAuthorProfile();
 
         List<WebElement> profileTab = driver.findElements(By.xpath("//a[contains(., 'Профиль')]"));
         assertFalse(profileTab.isEmpty(), "Вкладка Профиль отсутствует.");
